@@ -1,0 +1,1 @@
+labModule.initModule();
