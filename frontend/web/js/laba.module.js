@@ -18,14 +18,17 @@ var labModule = (function() {
         iframe.style.height='auto';   
         iframe.style.height = '55vh';
 
-      },
+      }, 
 
       makehtmlcontent = function(sightj, contact, adress) {
           
-        $.ajax({ 
-             url: 'contentmaker.php',
-             data: {sightj: sightj, contact:contact, adress: adress} 
-        });
+        return $.post('?r=site/get-content', {
+                'foo': 'foo',
+                 sightj: sightj,
+                 contact: contact,
+                 adress: adress
+              } 
+              );
       },     	
 
       getSights = function() {
@@ -173,11 +176,41 @@ var labModule = (function() {
               );
       },
 
+      initWrap = function(content){
+        var wrap = document.createElement('iframe');
+
+        //wrap.setAttribute("id", "wrap");
+        
+        wrap.src = "data:text/html;charset=utf-8," + content;
+        wrap.style.border = 'none'; 
+        wrap.style.width = '31vw';
+        wrap.style.height ='31vw';
+/*
+        var cssLink = document.createElement("link");
+        cssLink.href = "frontend\\web\\assets\\207c5bef\\css\\bootstrap.css";
+        cssLink.rel = "stylesheet";
+        cssLink.type = "text/css";
+        wrap.document.body.appendChild(cssLink);
+*/
+        /*
+        $('wrap').contents().find("head")
+        .append($("<style type='text/css'>  .my-class{display:none;}  </style>")); */
+
+        //document.getElementById('wrap').style.border= 'none';
+       
+
+        return wrap;
+      },
+      
+
+
+
 
       popupCreate = function(feature, element, map, evt, popup)
-      {
+      {         
+
                 if (feature) {
-            
+                          element.popover('destroy');
             map.setView(new ol.View({center: ol.proj.fromLonLat([feature.get('posX'),feature.get('posY') ]), zoom: parseInt(map.getView().getZoom()) }));
             sightj = JSON.parse(feature.get('sightjson'));
             var STId = sightj["SightId"];
@@ -188,34 +221,42 @@ var labModule = (function() {
 
 
                                 getContact(STId).done(function(contact){
-                                if (contact == ""){
-                                    makehtmlcontent(sightj, '', adress);
+                                if (contact == ""){   
+                                  makehtmlcontent(sightj, contact, adress).done(function(content){    
+                                  if (content){              
+                                                                               
                                     element.popover({
-                                    'placement': 'left',
-                                    'html': true,
-                                    'content': function() {
-                                          return '<iframe src="/content.php" style="border:none" width="100%" onload="adjustPopover(this)">'+'</iframe>'; 
-                                        }
-                                   });
+                                      'placement': 'left',
+                                      'html': true,
+                                      'content': initWrap(content)
+                                    });                                    
                                     popup.setPosition(evt.coordinate);
 
-                                   var str = feature.get('name');
-                                  element.popover('show');
+                                    var str = feature.get('name');
+                                    element.popover('show');
+                                  }
+                                  });
                                 }
                                 else if (contact)
-                                {
-                                  makehtmlcontent(sightj, contact, adress);
+                                {                 
+                                makehtmlcontent(sightj, contact, adress).done(function(content){     
+                                if (content){      
+                                      
                                   element.popover({
                                     'placement': 'left',
                                     'html': true,
-                                    'content': function() {
-                                          return '<iframe src="/content.php" style="border:none" width="100%" onload="adjustPopover(this)">'+'</iframe>'; 
-                                        }
+                                    'content': initWrap(content)
+
+                                    /*function() {
+                                          return '<iframe src="./views/site/content.php" style="border:none" width="32vw" onload="adjustPopover(this)">'+'</iframe>'; 
+                                        }*/
                                    });
                                     popup.setPosition(evt.coordinate);
 
-                                   var str = feature.get('name');
-                                  element.popover('show');
+                                    var str = feature.get('name');
+                                    element.popover('show');
+                                }
+                                });
                                 }
                             }).fail(function() {
                           // An error occurred
@@ -238,6 +279,8 @@ var labModule = (function() {
 
            }
           else {
+
+          var jjj = map.getTargetElement();
           element.popover('destroy');
         }
 
@@ -276,6 +319,9 @@ var labModule = (function() {
                 });
                 var element = document.getElementById('popup');
                 var popup = initPopup(element,map);
+
+
+
                 map.on('click', function(evt) {
                   var feature =  getClickfeature(evt,map);
                   popupCreate(feature, $(element), map, evt, popup);

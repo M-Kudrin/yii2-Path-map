@@ -272,6 +272,80 @@ class SiteController extends Controller
         return $contact;
     }
 
+    public function actionGetContent() {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if (isset($_POST['sightj'])) {
+            $jsight = $_POST['sightj'];
+
+            $id = $jsight["SightId"];
+            $name = $jsight["Sightname"];
+            $description = $jsight["descriptions"];
+            $typeid = $jsight["SightTypeId"];
+            $adress = $_POST['adress'];
+            $contact = $_POST['contact'];
+        }
+/*
+   &lt;?php
+                    use vendor\\yiisoft\\yii2-bootstrap\\BootstrapAsset;
+                    BootstrapAsset::register($this); 
+                ?&gt;
+*/
+        $result = "
+                <html>
+
+                <body>
+
+                <img id =\"ima\" src=\"http:\/\/frontend.dev\/data\/sight".$id.".jpg\" width=\"90%\" height=\"auto\" style=\"align:center\" ><br /><br />
+                    <p>
+                    <strong>".$name."</strong><br />
+                    ".$description."
+                    </p>
+                    <div width=\"45%\"  >
+                        <a id=\"adress-btn\" href=\"#\" class=\"btn btn-info\" role=\"button\" onclick=\"openbox('adress', 'adress-btn'); return false\">Адреса</a>
+                        <div id=\"adress\" style=\"display: none;\">
+                            <p>Адрес: ".$adress["Street"]."  ".$adress["Number"]." ".$adress["Litera"]."</p>
+                        </div>
+                    </div><br />
+                    ";
+
+                    if ($contact != '')
+                    {
+                        
+                        $result .= "
+                    <div width=\"45%\" >
+                        <a id=\"contact-btn\" href=\"#\" class=\"btn btn-info\" role=\"button\" onclick=\"openbox('contact', 'contact-btn'); return false\">Контакты</a>
+                        <div id=\"contact\" style=\"display: none;\">
+                            <p>Телефон: ".$contact["phone"]."</p>
+                            <p>Сайт: ".$contact["site"]."</p>
+                            <p>Рабочее время: ".$contact["WorkTime"]."</p>
+                        </div>
+                    </div>
+                    ";
+                    }
+                    $result .= "
+                
+                <script type=\"text/javascript\">
+                function openbox(id, btnid){
+        document.getElementById(btnid).style.display = 'none';
+
+            display = document.getElementById(id).style.display;
+            if(display=='none'){
+               document.getElementById(id).style.display='inline-block';
+            }else{
+               document.getElementById(id).style.display='none';
+            }
+        }
+
+        </script>
+        </body>
+        </html>
+        "; 
+
+
+        return $result;
+
+        
+    }
 
 
 

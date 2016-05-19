@@ -103,3 +103,45 @@ a.desc:after {
 .nav > li > form > button:hover {
     text-decoration: none;
 }
+
+iframe{   
+    width: 32vw !important;
+    height: 100%;    
+    overflow: hidden;
+    overflow-y: hidden;  
+    padding: 10px 0px 0px 10px;
+
+}
+
+#wrap{
+    width: 90%;
+    padding: 5px 5px 5px 15px; 
+    height:auto;   
+    /*min-height: 55vh !important;
+    max-height: 65vh !important;*/
+}
+
+.popover{
+    display: none;
+    min-height: 55vh !important;
+    max-height: 65vh !important;
+    width: 30vw !important;
+    max-width: none;
+    max-width: 600px;
+    overflow: hidden;
+}
+
+.popover-content {
+    height: none;
+    min-height: 55vh !important;
+    max-height: 65vh !important;
+    width: 31vw !important;
+    /*display: block;*/
+    overflow: auto;
+    overflow-x: hidden ;
+    overflow-y: auto;
+
+    
+    padding: 5px 5px 5px 15px; 
+    
+}

@@ -7,7 +7,6 @@ use app\models\SightType;
 use yii\helpers\Json;
 use app\views\site\functions;
 
-/* @var $this yii\web\View */
 
 $this->title = 'Туристическая карта Самары';
 ?>
@@ -19,7 +18,8 @@ $this->title = 'Туристическая карта Самары';
 
                 <h2>Туристическая карта Самары</h2>
                 <div id="map" class="map" style="width:100%; max-height:500px">
-                <div id="popup"></div>
+                <div id="popup">
+                </div>
                 </div>
                 <div id="checkboxes"><input type="checkbox" id="9"> </div>
         
