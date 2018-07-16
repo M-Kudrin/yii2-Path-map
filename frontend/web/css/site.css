@@ -2,7 +2,9 @@ html,
 body {
     height: 100%;
 }
-
+.pop-title{
+    text-decoration: underline;
+}
 .wrap {
     min-height: 100%;
     height: auto;

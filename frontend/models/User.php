@@ -11,14 +11,14 @@ use Yii;
  * @property string $username
  * @property string $password1
  */
-class Users extends \yii\db\ActiveRecord
+class User extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'users';
+        return 'user';
     }
 
     /**
@@ -29,7 +29,7 @@ class Users extends \yii\db\ActiveRecord
         return [
             [['UserId'], 'required'],
             [['UserId'], 'integer'],
-            [['password1'], 'string'],
+            [['password'], 'string'],
             [['username'], 'string', 'max' => 450],
         ];
     }
@@ -42,7 +42,7 @@ class Users extends \yii\db\ActiveRecord
         return [
             'UserId' => 'User ID',
             'username' => 'Username',
-            'password1' => 'Password1',
+            'password' => 'Password',
         ];
     }
 }

@@ -94,6 +94,7 @@ class SiteController extends Controller
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
+            //return $this->redirect(Yii::$app->request->referrer);
         } else {
             return $this->render('login', [
                 'model' => $model,
@@ -216,6 +217,38 @@ class SiteController extends Controller
         ]);
     }
 
+        public function actionPicEdit()
+    {
+        $id = $_POST['id'];
+        $path = "data/sight".$id.".jpg";
+        if (!@copy($_FILES['file']['tmp_name'], $path))
+            echo 'Фото не прикреплено';
+        else
+echo 'Загрузка удачна';
+    }
+
+        public function actionPicAdd()
+    {
+        $maxidsight = Sight::find()->orderBy(['SightId' => SORT_DESC])->one();
+            $id = $maxidsight->SightId;
+            $id +=1;
+        $path = "data/sight".$id.".jpg";
+        if (!@copy($_FILES['file']['tmp_name'], $path))
+            echo 'Фото не прикреплено';
+        else
+echo 'Загрузка удачна';
+    }            
+
+        public function actionGetType() {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $id = $_POST["id"];
+        $Sight = Sight::find()->where(['SightId'=>$id])->one();
+        $typeid = $Sight->SightTypeId;
+        $type = SightType::find()->where(['SightTypeId'=>$typeid])->one();
+
+        return $type;
+    }
+
     public function actionGetSights() {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $sights = Sight::find()
@@ -232,20 +265,276 @@ class SiteController extends Controller
         return $types;
     }
 
-    public function actionGetCheckboxes() {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $typic = $_POST["types"];
-        $types = json_decode($typic);
-        $typeslength = count($types);
-        $checkboxes = "";          
-        for ($i=0; $i <= $typeslength-1 ; $i++) {    
-            $name = $types[$i]->{'TypeName'};
-            $id = $i+1;
-          $checkboxes .= "<input type=\"checkbox\" id=\"$id\" > $name ";
-        }      
-        return $checkboxes;
+    public function actionAddSight() {        
+        $r = false;
+        if (isset($_POST['nsight'])) {
+            $jsight = json_decode($_POST['nsight']);
+
+            $maxidsight = Sight::find()->orderBy(['SightId' => SORT_DESC])->one();
+            $id = $maxidsight->SightId;
+
+            $id +=1;
+            //$id = Sight::find()->select(['SightId'])->max();
+            
+            $name = $jsight->SightName;
+            //$name = $jsight["Sightname"];
+            
+            $description = $jsight->SightDescription;
+            $type = $jsight->SightType;            
+            $street = $jsight->SightStreet;
+            $number = $jsight->SightNumber;
+            $litera = $jsight->SightLitera;
+            $phone = $jsight->SightPhone;
+            $site = $jsight->SightSite;
+            $worktime = $jsight->SightWorkTime;
+            $x = $jsight->x;
+            $y = $jsight->y;
+            
+            
+            //TypeTable
+            $Typeid = null;            
+            $sightType = SightType::find()->where(['TypeName'=>$type])->one();
+            if ($sightType==null)
+            {
+            $maxidtype = SightType::find()->orderBy(['SightTypeId' => SORT_DESC])->one();
+            $Typeid = $maxidtype->SightTypeId;
+          
+            //$Typeid = SightType::find()->select(['SightId'])->max();   
+            $Typeid +=1;
+            
+            $sighttype=new SightType;
+            $sighttype->SightTypeId = $Typeid;
+            $sighttype->TypeName =$type;
+            $sighttype->save();
+            }
+            else
+            {
+                $Typeid = $sightType->SightTypeId;
+            }
+
+            //AdressTable
+            $Adressid = null;
+            $adress = Adress::findOne(['Street'=>$street, 'Litera'=>$litera,'Number'=>$number]);
+            if ($adress==null)
+            {
+            $maxidadress = Adress::find()->orderBy(['AdressId' => SORT_DESC])->one();
+            $Adressid = $maxidadress->AdressId;
+            //$Adressid = Adress::find()->select(['SightId'])->max();   
+            $Adressid += 1;
+            
+            $adress= new Adress;
+            $adress->AdressId = $Adressid;
+            $adress->Street = $street;
+            $adress->Litera = $litera;
+            $adress->Number = $number;
+            $adress->save();
+            }
+            else
+            {
+                $Adressid = $adress->AdressId;
+            }
+ 
+            //ContactTable
+            $Contactid =null;
+
+            if (!( ($phone == null) && ($site == null) && ($worktime == null) ))
+            {                
+                $contact = Contact::findOne(['phone'=>$phone, 'site'=>$site, 'WorkTime'=>$worktime]);
+                if ($contact==null)
+                {
+                $maxidcontact = Contact::find()->orderBy(['ContactId' => SORT_DESC])->one();
+                $Contactid = $maxidcontact->ContactId;
+                //$Contactid = Contact::find()->select(['ContactId'])->max();   
+                $Contactid += 1;
+                $contact= new Contact;
+                $contact->ContactId = $Contactid;
+                $contact->phone = $phone;
+                $contact->site = $site;
+                $contact->WorkTime = $worktime;
+                $contact->save();
+                }
+                else
+                {
+                    $Contactid = $contact->ContactId;
+                }   
+            }
+        
+            $sight = new Sight;
+            $sight->SightId = $id;
+            $sight->Sightname = $name;
+            $sight->descriptions = $description;
+            $sight->SightTypeId = $Typeid;
+            
+            if ($Contactid != null)
+            {
+                $sight->ContactId = $Contactid;
+            }
+            if ($Adressid != null)
+            {
+                $sight->AdressId = $Adressid;
+            }
+            $sight->SightX = $x;
+            $sight->SightY = $y;
+            $sight->save();
+
+            if ($Adressid == null){
+                $r = false;
+            }      
+            else {
+                $r = true;
+            }
+
+
+
+            
+
+            //$number = $_POST["SightNumber"];
+            
+        
+        }        
+        return $r;
+
     }
 
+
+    public function actionEditSight() {        
+        $r = false;
+        if (isset($_POST['nsight'])) {
+            $jsight = json_decode($_POST['nsight']);
+
+            $id = $jsight->id;            
+            //$id = Sight::find()->select(['SightId'])->max();
+            
+            $name = $jsight->SightName;
+            //$name = $jsight["Sightname"];
+            
+            $description = $jsight->SightDescription;
+            $type = $jsight->SightType;            
+            $street = $jsight->SightStreet;
+            $number = $jsight->SightNumber;
+            $litera = $jsight->SightLitera;
+            $phone = $jsight->SightPhone;
+            $site = $jsight->SightSite;
+            $worktime = $jsight->SightWorkTime;
+            $x = $jsight->x;
+            $y = $jsight->y;
+            
+            
+            //TypeTable
+            $Typeid = null;            
+            $sightType = SightType::find()->where(['TypeName'=>$type])->one();
+            if ($sightType==null)
+            {
+            $maxidtype = SightType::find()->orderBy(['SightTypeId' => SORT_DESC])->one();
+            $Typeid = $maxidtype->SightTypeId;
+          
+            //$Typeid = SightType::find()->select(['SightId'])->max();   
+            $Typeid +=1;
+            
+            $sighttype=new SightType;
+            $sighttype->SightTypeId = $Typeid;
+            $sighttype->TypeName =$type;
+            $sighttype->save();
+            }
+            else
+            {
+                $Typeid = $sightType->SightTypeId;
+            }
+
+            //AdressTable
+            $Adressid = null;
+            $adress = Adress::findOne(['Street'=>$street, 'Litera'=>$litera,'Number'=>$number]);
+            if ($adress==null)
+            {
+            $maxidadress = Adress::find()->orderBy(['AdressId' => SORT_DESC])->one();
+            $Adressid = $maxidadress->AdressId;
+            //$Adressid = Adress::find()->select(['SightId'])->max();   
+            $Adressid += 1;
+            
+            $adress= new Adress;
+            $adress->AdressId = $Adressid;
+            $adress->Street = $street;
+            $adress->Litera = $litera;
+            $adress->Number = $number;
+            $adress->save();
+            }
+            else
+            {
+                $Adressid = $adress->AdressId;
+            }
+ 
+            //ContactTable
+            $Contactid =null;
+
+            if (!( ($phone == null) && ($site == null) && ($worktime == null) ))
+            {                
+                $contact = Contact::findOne(['phone'=>$phone, 'site'=>$site, 'WorkTime'=>$worktime]);
+                if ($contact==null)
+                {
+                $maxidcontact = Contact::find()->orderBy(['ContactId' => SORT_DESC])->one();
+                $Contactid = $maxidcontact->ContactId;
+                //$Contactid = Contact::find()->select(['ContactId'])->max();   
+                $Contactid += 1;
+                $contact= new Contact;
+                $contact->ContactId = $Contactid;
+                $contact->phone = $phone;
+                $contact->site = $site;
+                $contact->WorkTime = $worktime;
+                $contact->save();
+                }
+                else
+                {
+                    $Contactid = $contact->ContactId;
+                }   
+            }
+        
+            $sight = Sight::findOne(['SightId'=>$id]);;            
+            $sight->Sightname = $name;
+            $sight->descriptions = $description;
+            $sight->SightTypeId = $Typeid;
+            
+            if ($Contactid != null)
+            {
+                $sight->ContactId = $Contactid;
+            }
+            if ($Adressid != null)
+            {
+                $sight->AdressId = $Adressid;
+            }
+
+            $sight->save();
+
+            if ($Adressid == null){
+                $r = false;
+            }      
+            else {
+                $r = true;
+            }
+
+
+
+            
+
+            //$number = $_POST["SightNumber"];
+            
+        
+        }        
+        return $r;
+
+    }
+
+
+    
+    public function actionDeleteSight() {
+        if (isset($_POST['SightId'])) {
+            $sightid = $_POST['SightId'];
+            $sight = Sight::find()->where(['SightId'=>$sightid])->one();
+            $adressid = $sight->AdressId;
+            $contactid = $sight->ContactId;
+
+            $sight->delete();
+        }
+    }
 
     public function actionGetAdress() {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -272,6 +561,16 @@ class SiteController extends Controller
         return $contact;
     }
 
+    public function actionIsAdmin()
+    {
+        $a123 = 1;
+        $a124 = 0;
+        if (!\Yii::$app->user->isGuest) {
+            return $a123;
+        }
+        return  $a124;
+    }
+
     public function actionGetContent() {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if (isset($_POST['sightj'])) {
@@ -284,6 +583,7 @@ class SiteController extends Controller
             $adress = $_POST['adress'];
             $contact = $_POST['contact'];
         }
+
 /*
    &lt;?php
                     use vendor\\yiisoft\\yii2-bootstrap\\BootstrapAsset;

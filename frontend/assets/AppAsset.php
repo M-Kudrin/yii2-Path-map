@@ -23,6 +23,10 @@ class AppAsset extends AssetBundle
     public $js = [
         'js/laba.module.js',
         'js/init.module.js',
+        'assets/ejs/ejs.js',
+        'assets/ejs/ejs_production.js',
+        'assets/ejs/view.js',
+        'js/openbox.js',
         //init file
     ];
     public $depends = [

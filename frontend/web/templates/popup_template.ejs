@@ -1,0 +1,39 @@
+<div class="my-pop-container">
+	<h1 class="pop-title">
+		<% if (title) { %><!-- а так можно выражения записывать внутри <%  %> -->
+				<span><%= title %></span><!-- title тут это свойство ваше объекта myObject -->
+		<% } %>		
+	</h1>
+	<% if (photo) { %><!-- а так можно выражения записывать внутри <%  %> -->
+				<img id ="ima" src=<%= photo %> width="90%" height="auto" style="align:center" ><br /><br />
+	<% } %>
+
+	<% if (description) { %><!-- а так можно выражения записывать внутри <%  %> -->
+				<span><%= description %></span><!-- title тут это свойство ваше объекта myObject -->
+				<br />
+	<% } %>
+
+	<% if (adress) { %>
+		<div width="45%" >
+    		<a id="adress-btn" href="#" class="btn btn-info" role="button" onclick="openbox('adress', 'adress-btn'); return false">Адреса</a>
+        	<div id="adress" style="display: none;">
+        		<p><%= adress %></p>
+        	</div>
+        </div>
+        <br />
+    <% } %>
+
+    <% if (contact) { 
+    	 if (contact != '')
+                    { %>
+                    <div width="45%"  >
+                        <a id="contact-btn" href="#" class="btn btn-info" role="button" onclick="openbox('contact', 'contact-btn'); return false">Контакты</a>
+                        <div id="contact" style="display: none;">
+                            <p>Телефон: <%= phone %></p>
+                            <p>Сайт: <%= site %></p>
+                            <p>Рабочее время: <%= WorkTime %></p>
+                        </div>
+                    </div>
+                   <% } 
+                   } %>
+</div>

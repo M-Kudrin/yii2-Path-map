@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Users;
+use app\models\User;
 
 /**
  * UsersSearch represents the model behind the search form about `app\models\Users`.
  */
-class UsersSearch extends Users
+class UserSearch extends Users
 {
     /**
      * @inheritdoc
@@ -19,7 +19,7 @@ class UsersSearch extends Users
     {
         return [
             [['UserId'], 'integer'],
-            [['username', 'password1'], 'safe'],
+            [['username', 'password'], 'safe'],
         ];
     }
 
@@ -63,7 +63,7 @@ class UsersSearch extends Users
         ]);
 
         $query->andFilterWhere(['like', 'username', $this->username])
-            ->andFilterWhere(['like', 'password1', $this->password1]);
+            ->andFilterWhere(['like', 'password', $this->password1]);
 
         return $dataProvider;
     }

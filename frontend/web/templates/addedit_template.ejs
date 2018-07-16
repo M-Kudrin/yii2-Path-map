@@ -1,0 +1,52 @@
+<div class="object-form" id="object-form">	
+
+    <label for="inputSightName">Название</label>
+    <input type="text" id="inputSightName" <% if (SightName) { %> value="<%= SightName %>" <% } %> >
+    <br />
+
+    <label for="inputDescription">Описание</label>
+    <input type="text" id="inputDescription" <% if (Description) { %> value="<%= Description %>" <% } %> >
+    <br />
+
+    
+     <label for="inputSightType">Тип объекта</label>
+    <input type="text" id="inputSightType" <% if (SightType) { %> value="<%= SightType %>" <% } %> >
+    <br />
+
+   
+
+    <label for="inputSightStreet">Улица</label>
+    <input type="text" id="inputSightStreet" <% if (SightStreet) { %> value="<%= SightStreet %>" <% } %> >
+    <br />
+	
+    <label for="inputSightLitera">Литера</label>
+    <input type="text" id="inputSightLitera" <% if (SightLitera) { %> value="<%= SightLitera %>" <% } %> >
+    <br />
+
+    <label for="inputSightNumber">Номер дома</label>
+    <input type="text" id="inputSightNumber" <% if (SightNumber) { %> value="<%= SightNumber %>" <% } %> >
+    <br />
+
+    <label for="inputSightPhone">Телефон</label>
+    <input type="text" id="inputSightPhone" <% if (SightPhone) { %> value="<%= SightPhone %>" <% } %> >
+    <br />
+
+    <label for="inputSightSite">Сайт</label>
+    <input type="text" id="inputSightSite" <% if (SightSite) { %> value="<%= SightSite %>" <% } %> >
+    <br />
+
+    <label for="inputSightWorkTime">Рабочее время</label>
+    <input type="text" id="inputSightWorkTime" <% if (SightWorkTime) { %> value="<%= SightWorkTime %>" <% } %> >
+    <br />
+
+
+    <% if(add){ %>
+    <button id="add-button" class="btn btn-info">OK</button>    
+    <% } %>
+    <% if(edit){ %>
+    <button id="edit-button" class="btn btn-info">OK</button>    
+    <% } %>
+
+
+
+</div>
